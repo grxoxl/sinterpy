@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sinterpy"
 version = "0.0.0"
-description = "Toolkit for numerical optimization/inversion and linear operators"
+description = "Toolkit for seismic inversion and numerical optimization"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "UNLICENSED" }
+license = { text = "All rights reserved" }
 authors = [{ name = "Korchuganov V.D." }]
 dependencies = [
   "numpy",
