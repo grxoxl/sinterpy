@@ -8,15 +8,13 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import wraps
 
-from .constants import Array, DTYPE_BASE
+from .constants import ArrayF32, DTYPE_BASE
 
 __all__ = ["L2Loss", "L1Loss", "HuberLoss", "LossFunctionBase"]
 
 # Public aliases
-array_like = Array
+array_like = ArrayF32
 dtype_base = DTYPE_BASE
-
-"""r - residual vector, of shape (n_samples,)."""
 
 def ensure_array_like(arg_name: str = "r", dtype=dtype_base):
     """

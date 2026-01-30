@@ -16,12 +16,6 @@ sparse = SPARSE
 
 
 
-""" abstract class is a class that is meant to be a blueprint for other classes.
-@abstractmethod is a decorator that is used to declare a method as abstract. 
-An abstract method is a method that must be implemented by any subclass of the abstract class. 
-@property is a decorator that is used to declare getters and setters for a class.
-"""
-
 class OperatorBase:
     def __init__(self, data: npt.NDArray[dtype_base], dtype: Optional[np.dtype] = dtype_base, sparse=sparse):
         data = csc_array(data) if sparse else np.asarray(data, dtype=dtype)
@@ -189,7 +183,7 @@ class OperatorBase:
         )
     
 class ConvolutionOperator(OperatorBase):
-    def __init__(self, 
+    def __init__(self,
                  kernel: npt.NDArray[dtype_base] = (-1, 1),
                  offset: np.int32 = None,
                  shape: Tuple[np.int32, np.int32] = (1, 1),
@@ -206,23 +200,19 @@ class ConvolutionOperator(OperatorBase):
         self.offset = (len(self.kernel) // 2) if offset is None else int(offset)
         self.shape = (int(shape[0]), int(shape[1]))
 
-        super().__init__(np.zeros(self.shape, dtype=dtype), dtype=dtype, sparse=sparse)
-        self.data = self._from_kernel()
-        # keep flags consistent after overwriting data
-        self.dtype = self.data.dtype if hasattr(self.data, "dtype") else dtype
-        self.sparse = issparse(self.data) or isinstance(self.data, csc_array)
+        data = self._from_kernel(self.shape[0], self.offset, self.kernel, dtype, sparse)
+        super().__init__(data, dtype=dtype, sparse=sparse)
 
-    def _from_kernel(self):
-        N = self.n
+    @staticmethod
+    def _from_kernel(N: int, offset: int, kernel: npt.NDArray[dtype_base], dtype: np.dtype, sparse: bool):
+        if offset < 0 or offset >= N:
+            raise ValueError(f"offset must satisfy 0 <= offset < N, got offset={offset}, N={N}.")
 
-        if self.offset < 0 or self.offset >= N:
-            raise ValueError(f"offset must satisfy 0 <= offset < N, got offset={self.offset}, N={N}.")
+        first_col = np.zeros(N, dtype=dtype)
+        first_row = np.zeros(N, dtype=dtype)
 
-        first_col = np.zeros(N, dtype=self.dtype)
-        first_row = np.zeros(N, dtype=self.dtype)
-
-        for k, val in enumerate(self.kernel):
-            d = k - self.offset
+        for k, val in enumerate(kernel):
+            d = k - offset
             if d >= 0:
                 if d < N:
                     first_col[d] = val
@@ -234,7 +224,7 @@ class ConvolutionOperator(OperatorBase):
         first_row[0] = first_col[0]
 
         A = toeplitz(first_col, first_row)
-        return csc_array(A) if self.sparse else A
+        return csc_array(A) if sparse else A
 
 class AcousticStationaryOperator(OperatorBase):
     def __init__(self,

@@ -61,8 +61,8 @@ class TestCheckpointExample(unittest.TestCase):
             predict_grad=predict_grad,
             real=b_noisy,
             prior=x_prior,
-            loss=L2Loss(),
-            regloss=HuberLoss(delta=np.float32(1.345)),
+            misfit_loss=L2Loss(),
+            mbi_loss=HuberLoss(delta=np.float32(1.345)),
             lam=np.float32(1e-2),
         )
 

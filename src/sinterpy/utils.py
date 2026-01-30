@@ -3,13 +3,11 @@
 import numpy as np
 from scipy.signal import butter, filtfilt
 
-from .constants import Array, DTYPE_BASE
-
-dtype_base = DTYPE_BASE
+from .constants import ArrayF32, DTYPE_BASE
 
 __all__ = ["ricker_wavelet", "butter_lowpass_filter"]
 
-def ricker_wavelet(f_hz: DTYPE_BASE, dt: DTYPE_BASE, nt: np.int32) -> Array:
+def ricker_wavelet(f_hz: DTYPE_BASE, dt: DTYPE_BASE, nt: np.int32) -> ArrayF32:
     t0 = (nt - 1) / 2 * dt
     t = np.arange(nt) * dt - t0
     a = (np.pi * f_hz * t) ** 2
