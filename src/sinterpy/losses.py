@@ -75,7 +75,7 @@ class L2Loss(LossFunctionBase):
     @ensure_array_like("r", dtype=dtype_base)
     def value(self, r: array_like) -> dtype_base:
         # r is guaranteed np.ndarray(dtype_base) here
-        return 0.5 * dtype_base(np.dot(r, r))
+        return dtype_base(0.5) * dtype_base(np.dot(r, r))
 
     @ensure_array_like("r", dtype=dtype_base)
     def grad_r(self, r: array_like) -> npt.NDArray[dtype_base]:
